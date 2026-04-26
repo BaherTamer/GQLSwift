@@ -8,7 +8,7 @@
 struct GQLOperation {
     let name: String
     let type: String
-    let content: String
+    let document: String
     let directory: String
     let dependencies: Set<String>
 }

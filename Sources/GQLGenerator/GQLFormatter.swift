@@ -12,16 +12,16 @@ enum GQLFormatter {
         operation: GQLOperation,
         swiftTypeName: String
     ) -> String {
-        let trimmedContent = operation.content.trimmingCharacters(
+        let trimmedDocument = operation.document.trimmingCharacters(
             in: .whitespacesAndNewlines
         )
         
-        let content = shouldPreserveLayout(trimmedContent) ?
-            trimmedContent :
-            prettyFormat(trimmedContent)
+        let document = shouldPreserveLayout(trimmedDocument) ?
+            trimmedDocument :
+            prettyFormat(trimmedDocument)
         
         let indentation = "        "
-        let indentedContent = content
+        let indentedDocument = document
             .split(separator: "\n", omittingEmptySubsequences: false)
             .map { indentation + String($0) }
             .joined(separator: "\n")
@@ -33,8 +33,8 @@ enum GQLFormatter {
             struct \(swiftTypeName) {
                 static let name = "\(name)"
                 static let type = "\(type)"
-                static let content = \"\"\"
-        \(indentedContent)
+                static let document = \"\"\"
+        \(indentedDocument)
                 \"\"\"
             }
         
@@ -57,7 +57,7 @@ enum GQLFormatter {
     }
 
     private static func prettyFormat(_ source: String) -> String {
-        var content: [Character] = []
+        var document: [Character] = []
         var depth = 0
         var index = source.startIndex
         var inString = false
@@ -67,7 +67,7 @@ enum GQLFormatter {
             let char = source[index]
             
             if inString {
-                content.append(char)
+                document.append(char)
                 
                 if escaped {
                     escaped = false
@@ -84,48 +84,48 @@ enum GQLFormatter {
             switch char {
                 
             case "\"":
-                content.append(char)
+                document.append(char)
                 inString = true
                 
             case "{":
-                content.append(contentsOf: " {")
+                document.append(contentsOf: " {")
                 depth += 1
-                content.append("\n")
+                document.append("\n")
                 let spaces = String(repeating: "  ", count: depth)
-                content.append(contentsOf: spaces)
+                document.append(contentsOf: spaces)
                 
             case "}":
                 depth = max(0, depth - 1)
-                content.append("\n")
+                document.append("\n")
                 let spaces = String(repeating: "  ", count: depth)
-                content.append(contentsOf: spaces)
-                content.append("}")
+                document.append(contentsOf: spaces)
+                document.append("}")
                 
             case "(", ")", ",", ":":
-                content.append(char)
+                document.append(char)
                 if char == ":" {
-                    content.append(" ")
+                    document.append(" ")
                 }
                 
             case " ", "\t", "\r", "\n":
                 if
-                    let last = content.last,
+                    let last = document.last,
                     !last.isWhitespace,
                     last != "{",
                     last != "("
                 {
-                    content.append(" ")
+                    document.append(" ")
                 }
                 
             default:
-                content.append(char)
+                document.append(char)
                 
             }
             
             index = source.index(after: index)
         }
         
-        return String(content)
+        return String(document)
             .trimmingCharacters(in: .whitespacesAndNewlines)
     }
 }

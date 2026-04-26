@@ -76,7 +76,7 @@ enum GQLParser {
             return GQLOperation(
                 name: op.name,
                 type: op.type,
-                content: op.content + "\n" + expandedContent,
+                document: op.document + "\n" + expandedContent,
                 directory: op.directory,
                 dependencies: op.dependencies
             )
@@ -206,15 +206,15 @@ enum GQLParser {
             }
             
             if depth == 0 {
-                let content = type + " " + String(body[..<bracePos]).trimmingCharacters(
+                let document = type + " " + String(body[..<bracePos]).trimmingCharacters(
                     in: .whitespaces
                 ) + String(characters)
                 return GQLOperation(
                     name: opName,
                     type: type,
-                    content: content,
+                    document: document,
                     directory: directory,
-                    dependencies: Set(fragmentSpreadNames(in: content))
+                    dependencies: Set(fragmentSpreadNames(in: document))
                 )
             }
         }

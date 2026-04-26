@@ -18,7 +18,7 @@ The generated file contains a root `struct GQLOperations` with one nested `struc
 |---|---|
 | `name` | The operation name (e.g. `"HelloWorldQuery"`) |
 | `type` | Either `"query"` or `"mutation"` |
-| `content` | The full, self-contained GraphQL document string |
+| `document` | The full, self-contained GraphQL document string |
 
 > Duplicate operation names are automatically disambiguated so the project always compiles cleanly.
 
@@ -64,7 +64,7 @@ struct GQLOperations {
     struct HelloWorldQuery {
         static let name    = "HelloWorldQuery"
         static let type    = "query"
-        static let content = """
+        static let document = """
         query HelloWorld {
           __typename
         }
@@ -76,7 +76,7 @@ struct GQLOperations {
 Then use it anywhere in your target:
 
 ```swift
-let document = GQLOperations.HelloWorldQuery.content
+let document = GQLOperations.HelloWorldQuery.document
 ```
 
 > If operation names collide, the generated struct names are disambiguated automatically while the `name` property always reflects the original GraphQL name.
